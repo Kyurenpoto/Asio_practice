@@ -1,0 +1,9 @@
+[submodule "submodules/spdlog"]
+	path = submodules/spdlog
+	url = https://github.com/gabime/spdlog
+[submodule "submodules/ut"]
+	path = submodules/ut
+	url = https://github.com/boost-ext/ut
+[submodule "submodules/asio"]
+	path = submodules/asio
+	url = https://github.com/chriskohlhoff/asio/
