@@ -11,7 +11,6 @@ add_subdirectory (projects/Asio_common)
 
 # submodules
 add_subdirectory (submodules/spdlog)
-add_subdirectory (submodules/scnlib)
 
 # dependencies
 add_dependencies (Asio_server
@@ -22,6 +21,5 @@ add_dependencies (Asio_client
 )
 add_dependencies (Asio_common
 	spdlog
-	scn::scn
 	asio::asio
 )

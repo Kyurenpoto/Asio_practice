@@ -1,43 +1,37 @@
 #include "Asio_common/common.h"
 
-#include "spdlog/spdlog.h"
-#include "scn/scn.h"
 #include "asio.hpp"
 
-namespace
-{
-    void printReceived(const std::string& endpoint, std::size_t n, std::string buf)
-    {
-        if (n == 0)
-            fmt::print("Empty Message from {}\n", endpoint);
-        else if (n >= 1024)
-            fmt::print("Over sized message from {}\n", endpoint);
-        else
-            fmt::print("Message from {}: {}\n", endpoint, buf);
-    }
-}
+#include "Asio_common/detail/HandledException.h"
+#include "Asio_common/detail/DetachedIOContext.h"
+#include "Asio_common/detail/Echo.h"
 
 Server::Server(int nThreads, uint_least16_t port) :
     impl(std::make_unique<Impl>(nThreads, port))
 {}
 
+Server::Server(uint_least16_t port) :
+    Server(1, port)
+{}
+
 Server::~Server() = default;
 
-struct Server::Impl
+struct Server::Impl final :
+    public Executable
 {
     Impl(int nThreads, uint_least16_t _port) :
-        io_context(nThreads),
+        ioContext(nThreads),
         port(_port)
     {}
 
-    void execute();
+    void execute() override;
 
 private:
     asio::awaitable<void> listener();
     asio::awaitable<void> echo(asio::ip::tcp::socket socket);
 
 private:
-    asio::io_context io_context;
+    DetachedIOContext ioContext;
     uint_least16_t port;
 };
 
@@ -48,19 +42,7 @@ void Server::execute()
 
 void Server::Impl::execute()
 {
-    try
-    {
-        asio::signal_set signals(io_context, SIGINT, SIGTERM);
-        signals.async_wait([&](auto, auto) { io_context.stop(); });
-
-        asio::co_spawn(io_context, listener(), asio::detached);
-
-        io_context.run();
-    }
-    catch (std::exception& e)
-    {
-        spdlog::error("Exception: {}\n", e.what());
-    }
+    ioContext.run([&]() { return listener(); });
 }
 
 asio::awaitable<void> Server::Impl::listener()
@@ -76,30 +58,11 @@ asio::awaitable<void> Server::Impl::listener()
 
 asio::awaitable<void> Server::Impl::echo(asio::ip::tcp::socket socket)
 {
-    const std::string endpoint = fmt::format("({}:{})",
-        socket.remote_endpoint().address().to_string(), port);
+    EchoTarget echo(std::move(socket));
 
-    try
-    {
-        std::string buf;
-        for (;;)
-        {
-            std::size_t n = co_await socket.async_read_some(asio::buffer(buf), asio::use_awaitable);
-            
-            printReceived(endpoint, n, buf);
-            if (n == 0 || n >= 1024)
-            {
-                n = 0;
-                buf = "";
-            }
-
-            co_await socket.async_write_some(asio::buffer(buf, n), asio::use_awaitable);
-        }
-    }
-    catch (std::exception& e)
-    {
-        spdlog::error("echo Exception: {}\n", e.what());
-    }
+    LoggedException logger;
+    HandledException handler(logger);
+    co_await handler.handle(AwaitableAction([this, &echo]()->asio::awaitable<void> { co_await echo.run(); }));
 }
 
 Client::Client(uint_least16_t port) :
@@ -108,21 +71,21 @@ Client::Client(uint_least16_t port) :
 
 Client::~Client() = default;
 
-struct Client::Impl
+struct Client::Impl final :
+    public Executable
 {
     Impl(uint_least16_t _port) :
         port(_port)
     {}
 
-    void execute();
+    void execute() override;
 
 private:
-    asio::awaitable<void> terminal();
-
-    bool isValidBufSize(const std::size_t n);
+    asio::awaitable<void> echo();
+    asio::ip::tcp::socket config();
 
 private:
-    asio::io_context io_context;
+    DetachedIOContext ioContext;
     uint_least16_t port;
 };
 
@@ -133,67 +96,24 @@ void Client::execute()
 
 void Client::Impl::execute()
 {
-    try
-    {
-        asio::signal_set signals(io_context, SIGINT, SIGTERM);
-        signals.async_wait([&](auto, auto) { io_context.stop(); });
-
-        asio::co_spawn(io_context, terminal(), asio::detached);
-
-        io_context.run();
-    }
-    catch (std::exception& e)
-    {
-        spdlog::error("Exception: {}\n", e.what());
-    }
+    ioContext.run([&]() { return echo(); });
 }
 
-asio::awaitable<void> Client::Impl::terminal()
+asio::awaitable<void> Client::Impl::echo()
 {
-    try
-    {
-        asio::ip::tcp::endpoint server_addr(asio::ip::make_address("127.0.0.1"), port);
-        asio::ip::tcp::socket socket(io_context);
-        asio::connect(socket, &server_addr);
+    asio::ip::tcp::socket socket(config());
+    EchoSource echo(std::move(socket));
 
-        const std::string endpoint = fmt::format("({}:{})",
-            socket.remote_endpoint().address().to_string(), port);
-
-        for (;;)
-        {
-            std::string buf;
-            scn::prompt("Enter message: ", "{}", buf);
-            if (!isValidBufSize(buf.size()))
-                continue;
-
-            co_await socket.async_write_some(asio::buffer(buf), asio::use_awaitable);
-
-            size_t n = co_await socket.async_read_some(asio::buffer(buf), asio::use_awaitable);
-
-            printReceived(endpoint, n, buf);
-        }
-    }
-    catch (std::exception& e)
-    {
-        spdlog::error("Exception: {}\n", e.what());
-    }
+    LoggedException logger;
+    HandledException handler(logger);
+    co_await handler.handle(AwaitableAction([this, &echo]()->asio::awaitable<void> { co_await echo.run(); }));
 }
 
-bool Client::Impl::isValidBufSize(const std::size_t n)
+asio::ip::tcp::socket Client::Impl::config()
 {
-    if (n == 0)
-    {
-        fmt::print("Cannot send empty message!\n");
+    asio::ip::tcp::endpoint server_addr(asio::ip::make_address("127.0.0.1"), port);
+    asio::ip::tcp::socket socket = ioContext.socket();
+    asio::connect(socket, &server_addr);
 
-        return false;
-    }
-    if (n >= 1024)
-    {
-        fmt::print("Cannot send message over 1024 bytes!\n");
-        fmt::print("Requested bytes: {}\n", n);
-
-        return false;
-    }
-
-    return true;
+    return socket;
 }

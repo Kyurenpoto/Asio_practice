@@ -4,6 +4,3 @@
 [submodule "submodules/asio"]
 	path = submodules/asio
 	url = https://github.com/chriskohlhoff/asio/
-[submodule "submodules/scnlib"]
-	path = submodules/scnlib
-	url = https://github.com/eliaskosunen/scnlib
