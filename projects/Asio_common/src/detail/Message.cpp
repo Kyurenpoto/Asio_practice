@@ -6,7 +6,7 @@ DefaultMessageSource::DefaultMessageSource(asio::ip::tcp::socket& _socket) :
 
 asio::awaitable<void> DefaultMessageSource::send(std::string_view message)
 {
-    std::string buf = std::string(message) + "\n";
+    std::string buf = std::string(message) + "\r\n\r\n";
 
     co_await asio::async_write(socket, asio::buffer(buf, buf.length()), asio::use_awaitable);
 }
@@ -20,7 +20,7 @@ DefaultMessageTarget::DefaultMessageTarget(asio::ip::tcp::socket& _socket) :
 asio::awaitable<void> DefaultMessageTarget::receive(std::string& buf)
 {
     asio::streambuf streambuf;
-    size_t n = co_await asio::async_read_until(socket, streambuf, "\n", asio::use_awaitable);
+    size_t n = co_await asio::async_read_until(socket, streambuf, "\r\n\r\n", asio::use_awaitable);
 
     std::istream is(&streambuf);
     is >> buf;
