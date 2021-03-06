@@ -48,6 +48,8 @@ std::string Input::value() const
         std::string buf;
         fmt::print("Enter message: ");
         std::cin >> buf;
+        if (std::cin.eof())
+            throw std::ios_base::failure("EOF");
 
         BufSize size(buf);
         size.logInfo();
