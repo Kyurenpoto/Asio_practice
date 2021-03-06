@@ -20,6 +20,8 @@ void HandledException::handle(NormalAction tryAction)
     catch (std::exception& e)
     {
         catchAction.handle(e);
+        
+        return;
     }
 }
 
@@ -32,5 +34,7 @@ asio::awaitable<void> HandledException::handle(AwaitableAction tryAction)
     catch (std::exception& e)
     {
         catchAction.handle(e);
+
+        co_return;
     }
 }
