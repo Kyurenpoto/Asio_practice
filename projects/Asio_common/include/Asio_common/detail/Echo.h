@@ -4,7 +4,7 @@
 
 struct EchoSource final
 {
-    EchoSource(asio::ip::tcp::socket socket);
+    EchoSource(asio::ip::tcp::socket& socket);
 
     asio::awaitable<void> run();
 
@@ -15,7 +15,7 @@ private:
 
 struct EchoTarget final
 {
-    EchoTarget(asio::ip::tcp::socket socket);
+    EchoTarget(asio::ip::tcp::socket& socket);
 
     asio::awaitable<void> run();
 

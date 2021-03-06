@@ -58,7 +58,7 @@ asio::awaitable<void> Server::Impl::listener()
 
 asio::awaitable<void> Server::Impl::echo(asio::ip::tcp::socket socket)
 {
-    EchoTarget echo(std::move(socket));
+    EchoTarget echo(socket);
 
     LoggedException logger;
     HandledException handler(logger);
@@ -102,7 +102,7 @@ void Client::Impl::execute()
 asio::awaitable<void> Client::Impl::echo()
 {
     asio::ip::tcp::socket socket(config());
-    EchoSource echo(std::move(socket));
+    EchoSource echo(socket);
 
     LoggedException logger;
     HandledException handler(logger);

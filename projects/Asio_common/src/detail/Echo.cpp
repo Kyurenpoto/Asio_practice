@@ -2,7 +2,7 @@
 
 #include "Asio_common/detail/Input.h"
 
-EchoSource::EchoSource(asio::ip::tcp::socket socket) :
+EchoSource::EchoSource(asio::ip::tcp::socket& socket) :
     sender(socket),
     receiver(socket)
 {}
@@ -20,7 +20,7 @@ asio::awaitable<void> EchoSource::run()
     }
 }
 
-EchoTarget::EchoTarget(asio::ip::tcp::socket socket) :
+EchoTarget::EchoTarget(asio::ip::tcp::socket& socket) :
     sender(socket),
     receiver(socket)
 {}

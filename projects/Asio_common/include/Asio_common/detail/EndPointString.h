@@ -25,12 +25,12 @@ struct EndPointString
 struct DefaultEndPointString final :
     public EndPointString
 {
+    DefaultEndPointString(const asio::ip::tcp::socket& socket);
+
 private:
     DefaultEndPointString(const std::string address, const uint_least64_t port);
 
 public:
-    DefaultEndPointString(const asio::ip::tcp::socket& socket);
-
     std::string value() const override;
 
 private:
