@@ -4,3 +4,6 @@
 [submodule "submodules/asio"]
 	path = submodules/asio
 	url = https://github.com/chriskohlhoff/asio/
+[submodule "submodules/ut"]
+	path = submodules/ut
+	url = https://github.com/boost-ext/ut
