@@ -97,7 +97,7 @@ target_link_libraries (Asio_common PRIVATE spdlog)
 target_compile_features (Asio_common PUBLIC cxx_std_20)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES Clang)
-target_compile_options(Asio_common PUBLIC -Wall -Wpedantic -std=c++20 -fcoroutines -stdlib=libc++)
+target_compile_options(Asio_common PUBLIC -Wall -Wpedantic -std=c++20 -stdlib=libc++)
 target_link_libraries(Asio_common PUBLIC -stdlib=libc++)
 elseif(CMAKE_CXX_COMPILER_ID MATCHES GNU)
 target_compile_options(Asio_common PUBLIC -Wall -Wpedantic -std=c++20 -fcoroutines)

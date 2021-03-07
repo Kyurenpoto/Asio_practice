@@ -21,14 +21,13 @@ find_package (Threads REQUIRED)
 find_package (Asio REQUIRED)
 
 target_link_libraries (Test_Asio_common PRIVATE asio::asio)
-target_link_libraries (Test_Asio_common PRIVATE spdlog)
 target_link_libraries (Test_Asio_common PRIVATE ut)
 target_link_libraries (Test_Asio_common PRIVATE Asio_common)
 
 target_compile_features (Test_Asio_common PUBLIC cxx_std_20)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES Clang)
-target_compile_options(Test_Asio_common PUBLIC -Wall -Wpedantic -std=c++20 -fcoroutines -stdlib=libc++)
+target_compile_options(Test_Asio_common PUBLIC -Wall -Wpedantic -std=c++20 -stdlib=libc++)
 target_link_libraries(Test_Asio_common PUBLIC -stdlib=libc++)
 elseif(CMAKE_CXX_COMPILER_ID MATCHES GNU)
 target_compile_options(Test_Asio_common PUBLIC -Wall -Wpedantic -std=c++20 -fcoroutines)
