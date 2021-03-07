@@ -21,12 +21,16 @@ void EndPointString::Feature::printWithBuf(std::size_t n, std::string_view buf)
         fmt::print("Message from {}: {}\n", origin.value(), buf);
 }
 
+DefaultEndPointString::DefaultEndPointString(const asio::ip::tcp::socket& socket) :
+    DefaultEndPointString(socket.remote_endpoint().address().to_string(), socket.remote_endpoint().port())
+{}
+
 DefaultEndPointString::DefaultEndPointString(const std::string address, const uint_least64_t port) :
     endpoint(fmt::format("({}:{})", address, port))
 {}
 
-DefaultEndPointString::DefaultEndPointString(const asio::ip::tcp::socket& socket) :
-    DefaultEndPointString(socket.remote_endpoint().address().to_string(), socket.remote_endpoint().port())
+DefaultEndPointString::DefaultEndPointString(const std::string _endpoint) :
+    endpoint(_endpoint)
 {}
 
 std::string DefaultEndPointString::value() const

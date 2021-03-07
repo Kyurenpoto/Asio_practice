@@ -38,6 +38,7 @@ struct DefaultEndPointString final :
 
 private:
     DefaultEndPointString(const std::string address, const uint_least64_t port);
+    DefaultEndPointString(const std::string _endpoint);
 
 public:
     std::string value() const override;

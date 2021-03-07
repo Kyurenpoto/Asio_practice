@@ -62,7 +62,7 @@ asio::awaitable<void> Server::Impl::echo(asio::ip::tcp::socket socket)
 
     LoggedException logger;
     HandledException handler(logger);
-    co_await handler.handle(AwaitableAction([this, &echo]()->asio::awaitable<void> { co_await echo.run(); }));
+    co_await handler.handle(AwaitableAction([&echo]()->asio::awaitable<void> { co_await echo.run(); }));
 }
 
 Client::Client(uint_least16_t port) :
@@ -106,7 +106,7 @@ asio::awaitable<void> Client::Impl::echo()
 
     LoggedException logger;
     HandledException handler(logger);
-    co_await handler.handle(AwaitableAction([this, &echo]()->asio::awaitable<void> { co_await echo.run(); }));
+    co_await handler.handle(AwaitableAction([&echo]()->asio::awaitable<void> { co_await echo.run(); }));
 }
 
 asio::ip::tcp::socket Client::Impl::config()
