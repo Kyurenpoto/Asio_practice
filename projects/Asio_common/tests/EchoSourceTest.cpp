@@ -19,7 +19,7 @@ void EchoSourceTest()
         Input::Fake input;
         DefaultEchoSource echo(sender, receiver, input);
 
-        runCoroutine(echo.run());
+        runCoroutine([&echo]() { return echo.run(); });
 
         std::string_view transferred = messenger.read();
         expect(transferred.compare("test") == 0);

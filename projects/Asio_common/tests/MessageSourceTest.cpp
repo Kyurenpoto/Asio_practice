@@ -16,7 +16,7 @@ void MessageSourceTest()
         Messenger::Fake messenger;
         DefaultMessageSource sender(messenger);
 
-        runCoroutine(sender.send("test"));
+        runCoroutine([&sender]() { return sender.send("test"); });
 
         std::string_view transferred = messenger.read();
         expect(transferred.compare("test" "\r\n\r\n") == 0);

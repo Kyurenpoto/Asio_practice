@@ -1,8 +1,8 @@
 #include "CoroutineRunner.h"
 
-void runCoroutine(asio::awaitable<void> coroutine)
+void runCoroutine(AwaitableAction coro)
 {
     asio::io_context context;
-    asio::co_spawn(context, std::move(coroutine), asio::detached);
+    asio::co_spawn(context, coro(), asio::detached);
     context.run();
 }

@@ -19,7 +19,7 @@ void MessageTargetTest()
         messenger.write("test");
 
         std::string transferred;
-        runCoroutine(receiver.receive(transferred));
+        runCoroutine([&receiver, &transferred]() { return receiver.receive(transferred); });
 
         expect(transferred.compare("test") == 0);
     };

@@ -20,7 +20,7 @@ void EchoTargetTest()
 
         messenger.write("test");
 
-        runCoroutine(echo.run());
+        runCoroutine([&echo]() { return echo.run(); });
 
         std::string_view transferred = messenger.read();
         expect(transferred.compare("test") == 0);

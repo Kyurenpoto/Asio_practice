@@ -1,5 +1,6 @@
 #pragma once
 
 #include "asio.hpp"
+#include "Asio_common/detail/HandledException.h"
 
-void runCoroutine(asio::awaitable<void> coroutine);
+void runCoroutine(AwaitableAction coro);
