@@ -46,3 +46,6 @@ build/
 projects/Asio_common/Testing/
 
 Testing/Temporary/
+CTestTestfile.cmake
+projects/Asio_common/DartConfiguration.tcl
+projects/Asio_common/tests/Test_Asio_common

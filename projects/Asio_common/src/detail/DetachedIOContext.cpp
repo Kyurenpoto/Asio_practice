@@ -25,3 +25,17 @@ void DetachedIOContext::spawn(AwaitableAction target)
 
     ioContext.run();
 }
+
+void SingleDetachedIOContext::run(AwaitableAction target)
+{
+    LoggedException logger;
+    HandledException handler(logger);
+    handler.handle([this, target]() { spawn(target); });
+}
+
+void SingleDetachedIOContext::spawn(AwaitableAction target)
+{
+    asio::co_spawn(ioContext, target(), asio::detached);
+
+    ioContext.run();
+}

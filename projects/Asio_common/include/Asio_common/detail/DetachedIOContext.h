@@ -14,3 +14,14 @@ private:
 private:
     asio::io_context ioContext;
 };
+
+struct SingleDetachedIOContext final
+{
+    void run(AwaitableAction target);
+
+private:
+    void spawn(AwaitableAction target);
+
+private:
+    asio::io_context ioContext;
+};

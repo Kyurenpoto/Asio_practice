@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 3.17)
 
 project(Asio_common VERSION 0.1.0 DESCRIPTION "Common codes." LANGUAGES CXX)
 
+enable_testing ()
+
+add_subdirectory (tests)
+
 include(CheckIncludeFileCXX)
 include(CheckCXXCompilerFlag)
 include(CheckCXXSourceCompiles)
@@ -98,9 +102,3 @@ target_link_libraries(Asio_common PUBLIC -stdlib=libc++)
 elseif(CMAKE_CXX_COMPILER_ID MATCHES GNU)
 target_compile_options(Asio_common PUBLIC -Wall -Wpedantic -std=c++20 -fcoroutines)
 endif()
-
-add_subdirectory (tests)
-
-include (CTest)
-
-add_test (Test_Asio_common tests/Test_Asio_common)

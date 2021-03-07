@@ -3,9 +3,8 @@
 #include <string_view>
 
 #include "Asio_common/detail/Message.h"
+#include "Asio_common/detail/DetachedIOContext.h"
 #include "boost/ut.hpp"
-
-#include "CoroutineRunner.h"
 
 using namespace boost::ut;
 
@@ -19,7 +18,8 @@ void MessageTargetTest()
         messenger.write("test");
 
         std::string transferred;
-        runCoroutine([&receiver, &transferred]() { return receiver.receive(transferred); });
+        SingleDetachedIOContext ioContext;
+        ioContext.run([&receiver, &transferred]() { return receiver.receive(transferred); });
 
         expect(transferred.compare("test") == 0);
     };
