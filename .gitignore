@@ -42,3 +42,7 @@ CMakeFiles/
 projects/Asio_client/Asio_client
 projects/Asio_server/Asio_server
 build/
+
+projects/Asio_common/Testing/
+
+Testing/Temporary/

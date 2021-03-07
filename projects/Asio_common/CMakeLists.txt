@@ -71,6 +71,7 @@ add_library (Asio_common STATIC
 	"include/Asio_common/detail/DetachedIOContext.h"
 	"include/Asio_common/detail/Message.h"
 	"include/Asio_common/detail/Echo.h"
+	"include/Asio_common/detail/Messenger.h"
 	"src/common.cpp"
 	"src/detail/EndPointString.cpp"
 	"src/detail/Input.cpp"
@@ -78,6 +79,7 @@ add_library (Asio_common STATIC
 	"src/detail/DetachedIOContext.cpp"
 	"src/detail/Message.cpp"
 	"src/detail/Echo.cpp"
+	"src/detail/Messenger.cpp"
 )
 
 find_package (Threads REQUIRED)
@@ -90,11 +92,15 @@ target_link_libraries (Asio_common PRIVATE spdlog)
 
 target_compile_features (Asio_common PUBLIC cxx_std_20)
 
-set (CMAKE_BUILD_TYPE Debug)
-
 if(CMAKE_CXX_COMPILER_ID MATCHES Clang)
 target_compile_options(Asio_common PUBLIC -Wall -Wpedantic -std=c++20 -fcoroutines -stdlib=libc++)
 target_link_libraries(Asio_common PUBLIC -stdlib=libc++)
 elseif(CMAKE_CXX_COMPILER_ID MATCHES GNU)
 target_compile_options(Asio_common PUBLIC -Wall -Wpedantic -std=c++20 -fcoroutines)
 endif()
+
+add_subdirectory (tests)
+
+include (CTest)
+
+add_test (Test_Asio_common tests/Test_Asio_common)

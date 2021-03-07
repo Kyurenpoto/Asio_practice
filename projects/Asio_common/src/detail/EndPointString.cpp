@@ -2,6 +2,11 @@
 
 #include "spdlog/spdlog.h"
 
+std::string EndPointString::Fake::value() const
+{
+    return "test";
+}
+
 EndPointString::Feature::Feature(EndPointString& _origin) :
     origin(_origin)
 {}

@@ -41,7 +41,12 @@ void BufSize::logInfo() const
         spdlog::warn("Cannot send empty message!\n");
 }
 
-std::string Input::value() const
+std::string Input::Fake::value() const
+{
+    return "test";
+}
+
+std::string DefaultInput::value() const
 {
     for (;;)
     {

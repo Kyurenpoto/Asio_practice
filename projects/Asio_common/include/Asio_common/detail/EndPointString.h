@@ -6,20 +6,29 @@ struct EndPointString
 {
     virtual std::string value() const = 0;
 
-    struct Feature final
-    {
-    private:
-        static constexpr size_t MAX_SIZE = 1024 - 1;
-        static constexpr size_t MIN_SIZE = 1;
+    struct Fake;
+    struct Feature;
+};
 
-    public:
-        Feature(EndPointString& _origin);
+struct EndPointString::Fake final :
+    public EndPointString
+{
+    std::string value() const override;
+};
 
-        void printWithBuf(std::size_t n, std::string_view buf);
+struct EndPointString::Feature final
+{
+private:
+    static constexpr size_t MAX_SIZE = 1024 - 1;
+    static constexpr size_t MIN_SIZE = 1;
 
-    private:
-        EndPointString& origin;
-    };
+public:
+    Feature(EndPointString& _origin);
+
+    void printWithBuf(std::size_t n, std::string_view buf);
+
+private:
+    EndPointString& origin;
 };
 
 struct DefaultEndPointString final :
