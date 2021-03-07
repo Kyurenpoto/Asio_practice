@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.17)
 
-project(Test_Asio_common VERSION 0.1.0 DESCRIPTION "Common codes." LANGUAGES CXX)
+project(Test_Asio_common VERSION 1.0.0 DESCRIPTION "Common codes." LANGUAGES CXX)
 
 enable_testing ()
 
