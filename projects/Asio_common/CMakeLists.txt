@@ -92,7 +92,7 @@ find_package (Asio REQUIRED)
 target_include_directories (Asio_common PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 target_link_libraries (Asio_common PRIVATE asio::asio)
-target_link_libraries (Asio_common PRIVATE spdlog)
+target_link_libraries (Asio_common PRIVATE spdlog::spdlog_header_only)
 
 target_compile_features (Asio_common PUBLIC cxx_std_20)
 

@@ -1,7 +1,5 @@
 #include "Asio_common/detail/Messenger.h"
 
-#include <coroutine>
-
 asio::awaitable<void> Messenger::Fake::send(std::string& buf)
 {
     transferred = buf;
