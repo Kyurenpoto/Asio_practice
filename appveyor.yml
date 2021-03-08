@@ -1,0 +1,21 @@
+version: 1.0.{build}
+image: Visual Studio 2019
+configuration:
+  - Debug
+  - Release
+platform: x64
+environment:
+  matrix:
+    - GENERATOR: '"Visual Studio 16 2019"'
+install:
+  - git submodule update --init --recursive
+  - call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
+  - cd %APPVEYOR_BUILD_FOLDER%
+build_script:
+  - cmake -G %GENERATOR% .
+  - cmake --build .
+#build:
+#  verbosity: normal
+#  project: Asio_practice.sln
+test_script:
+  - ps: ctest
